@@ -94,76 +94,62 @@ char *termname = "st";
  */
 unsigned int tabspaces = 8;
 
-/* Terminal colors (16 first used in escape sequence)
-* static const char *colorname[] = {
-* 
-* 	"black",
-* 	"red3",
-* 	"green3",
-* 	"yellow3",
-* 	"blue2",
-* 	"magenta3",
-* 	"cyan3",
-* 	"gray90",
-* 
-* 
-* 	"gray50",
-* 	"red",
-* 	"green",
-* 	"yellow",
-* 	"#5c5cff",
-* 	"magenta",
-* 	"cyan",
-* 	"white",
-* 
-* 	[255] = 0,
-* 
-* 	
-* 	"#cccccc",
-* 	"#555555",
-* 	"#d3c6aa", default foreground colour
-* 	"#272e33",  default background colour
-* };
-* 
-*/
-
-
+/* Terminal colors (16 first used in escape sequence) */
 static const char *colorname[] = {
-    [0] = "#282828", /* black   */
-    [1] = "#d75f5f", /* red     */
-    [2] = "#afaf00", /* green   */
-    [3] = "#d7afaf", /* yellow  */
-    [4] = "#5fafff", /* blue    */
-    [5] = "#d75fd7", /* magenta */
-    [6] = "#5fd7af", /* cyan    */
-    [7] = "#d0d0d0", /* white   */
-    [8] = "#3c3836", /* bright black   */
-    [9] = "#f9b6b6", /* bright red     */
-    [10] = "#ffff00", /* bright green   */
-    [11] = "#ffd7af", /* bright yellow  */
-    [12] = "#87afff", /* bright blue    */
-    [13] = "#ffafff", /* bright magenta */
-    [14] = "#87ffd7", /* bright cyan    */
-    [15] = "#ffffd7", /* bright white   */
+	/* 8 normal colors */
+	"black",
+	"red3",
+	"green3",
+	"yellow3",
+	"blue2",
+	"magenta3",
+	"cyan3",
+	"gray90",
+
+	/* 8 bright colors */
+	"gray50",
+	"red",
+	"green",
+	"yellow",
+	"#5c5cff",
+	"magenta",
+	"cyan",
+	"white",
+
+	[255] = 0,
+
+	/* more colors can be added after 255 to use with DefaultXX */
+	"#cccccc",
+	"#555555",
+	"gray90", /* default foreground colour */
+	"black", /* default background colour */
 };
+
 
 /*
  * Default colors (colorname index)
  * foreground, background, cursor, reverse cursor
  */
-unsigned int defaultfg = 7;
-unsigned int defaultbg = 0;
+unsigned int defaultfg = 258;
+unsigned int defaultbg = 259;
 unsigned int defaultcs = 256;
 static unsigned int defaultrcs = 257;
 
 /*
- * Default shape of cursor
- * 2: Block ("█")
- * 4: Underline ("_")
- * 6: Bar ("|")
- * 7: Snowman ("☃")
+ * https://invisible-island.net/xterm/ctlseqs/ctlseqs.html#h4-Functions-using-CSI-_-ordered-by-the-final-character-lparen-s-rparen:CSI-Ps-SP-q.1D81
+ * Default style of cursor
+ * 0: blinking block
+ * 1: blinking block (default)
+ * 2: steady block ("█")
+ * 3: blinking underline
+ * 4: steady underline ("_")
+ * 5: blinking bar
+ * 6: steady bar ("|")
+ * 7: blinking st cursor
+ * 8: steady st cursor
  */
-static unsigned int cursorshape = 6;
+static unsigned int cursorstyle = 1;
+static Rune stcursor = 0x2603; /* snowman ("☃") */
 
 /*
  * Default columns and rows numbers
@@ -220,8 +206,8 @@ static Shortcut shortcuts[] = {
 	{ TERMMOD,              XK_Prior,       zoom,           {.f = +1} },
 	{ TERMMOD,              XK_Next,        zoom,           {.f = -1} },
 	{ TERMMOD,              XK_Home,        zoomreset,      {.f =  0} },
-	{ ControlMask,          XK_C,           clipcopy,       {.i =  0} },
-	{ ControlMask,          XK_V,           clippaste,      {.i =  0} },
+	{ TERMMOD,              XK_C,           clipcopy,       {.i =  0} },
+	{ TERMMOD,              XK_V,           clippaste,      {.i =  0} },
 	{ TERMMOD,              XK_Y,           selpaste,       {.i =  0} },
 	{ ShiftMask,            XK_Insert,      selpaste,       {.i =  0} },
 	{ TERMMOD,              XK_Num_Lock,    numlock,        {.i =  0} },
